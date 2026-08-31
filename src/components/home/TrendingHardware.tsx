@@ -11,6 +11,7 @@ const formatPrice = (price: number) =>
 
 const TrendingHardware = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [favorites, setFavorites] = useState<number[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -47,6 +48,8 @@ const TrendingHardware = () => {
           {(products.length ? products : Array.from({ length: 4 })).map(
             (product, index) => {
               const item = product as Product | undefined;
+              const isFavorite = item ? favorites.includes(item.id) : false;
+
               return (
                 <article
                   key={item?.id ?? index}
@@ -63,10 +66,30 @@ const TrendingHardware = () => {
                       <div className="h-full animate-pulse bg-slate-100" />
                     )}
                     <button
-                      aria-label="Add to favorites"
-                      className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-white/90 text-slate-500 shadow-sm"
+                      type="button"
+                      aria-label={
+                        isFavorite
+                          ? "Remove from favorites"
+                          : "Add to favorites"
+                      }
+                      onClick={() => {
+                        if (!item) return;
+
+                        setFavorites((prev) =>
+                          prev.includes(item.id)
+                            ? prev.filter((id) => id !== item.id)
+                            : [...prev, item.id],
+                        );
+                      }}
+                      className="absolute right-2 top-2 rounded-full bg-white/80 p-2.5 transition-colors hover:bg-slate-100"
                     >
-                      <Heart className="size-3.5" />
+                      <Heart
+                        className={`size-5 transition-colors ${
+                          isFavorite
+                            ? "fill-red-500 text-red-500"
+                            : "text-slate-950"
+                        }`}
+                      />
                     </button>
                   </div>
                   <div className="px-1 pb-1 pt-3">

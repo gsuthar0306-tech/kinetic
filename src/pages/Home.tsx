@@ -1,8 +1,8 @@
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Collections from "@/components/homepage/Collections";
-import TrendingHardware from "@/components/homepage/TrendingHardware";
-import Newsletter from "@/components/homepage/Newsletter";
+import Collections from "@/components/home/Collections";
+import TrendingHardware from "@/components/home/TrendingHardware";
+import Newsletter from "@/components/home/Newsletter";
 import woodenSpeaker from "@/assets/images/woodenspeaker.webp";
 
 const Home = () => {

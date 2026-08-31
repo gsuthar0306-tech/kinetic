@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export type Product = {
+export interface Product {
   id: number;
   title: string;
   category: string;
@@ -8,37 +8,83 @@ export type Product = {
   images: string[];
   price: number;
   rating: number;
-};
+}
 
-type ProductsResponse = {
+export interface ProductsResponse {
   products: Product[];
-};
+  total: number;
+  skip: number;
+  limit: number;
+}
 
-const electronicsCategories = new Set([
+const electronicsCategories = new Set<string>([
   "laptops",
   "smartphones",
   "tablets",
   "mobile-accessories",
 ]);
 
+export const electronicsStoreCategories: string[] = [
+  "All Electronics",
+
+  "Computers & Laptops",
+  "PC Components",
+  "Monitors",
+  "Storage",
+
+  "Smartphones",
+  "Tablets",
+  "Mobile Accessories",
+
+  "Keyboards",
+  "Mice",
+  "Webcams",
+  "Chargers & Cables",
+
+  "Headphones",
+  "Earbuds",
+  "Speakers",
+
+  "TV & Home Entertainment",
+
+  "Gaming",
+  "Gaming Accessories",
+
+  "Cameras",
+
+  "Networking",
+
+  "Smart Home",
+  "Wearables",
+
+  "Printers & Scanners",
+];
+
 const productsApi = axios.create({
   baseURL: "https://dummyjson.com",
   timeout: 10_000,
 });
 
-export async function getProducts() {
-  const { data } = await productsApi.get<ProductsResponse>("/products", {
-    params: {
-      limit: 1000,
-      select: "id,title,category,thumbnail,images,price,rating",
-    },
-  });
+export async function getProducts(): Promise<Product[]> {
+  try {
+    const { data } = await productsApi.get<ProductsResponse>("/products", {
+      params: {
+        limit: 0,
+        select: "id,title,category,thumbnail,images,price,rating",
+      },
+    });
 
-  return data.products;
+    return data.products ?? [];
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+
+    return [];
+  }
 }
 
-export async function getElectronicProducts() {
+export async function getElectronicProducts(): Promise<Product[]> {
   const products = await getProducts();
+
   return products.filter((product) =>
     electronicsCategories.has(product.category),
   );

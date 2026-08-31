@@ -70,7 +70,7 @@ const Newsletter = () => {
               <img
                 src={landingPagePreview}
                 alt="Kinetic audio collection preview"
-                className="h-auto w-full max-w-[700px] rounded-xl border border-slate-300 bg-white shadow-[0_25px_45px_rgba(30,45,75,0.25)]"
+                className="h-auto w-full max-w-[700px] max-h-[600px] rounded-xl border border-slate-300 bg-white shadow-[0_25px_45px_rgba(30,45,75,0.25)]"
               />
             </div>
           </div>
