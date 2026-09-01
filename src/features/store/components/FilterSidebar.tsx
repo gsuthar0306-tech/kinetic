@@ -7,7 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface Category {
@@ -27,7 +26,8 @@ export interface StoreFilters {
 }
 
 interface FilterSidebarProps {
-  onFiltersChange?: (filters: StoreFilters) => void;
+  filters: StoreFilters;
+  onFiltersChange: (filters: StoreFilters) => void;
 }
 
 const categories: Category[] = [
@@ -50,64 +50,56 @@ const priceRanges: { label: string; value: PriceRange }[] = [
 
 const ratings = [4.5, 4, 3.5];
 
-export const FilterSidebar = ({
-  onFiltersChange = () => undefined,
-}: FilterSidebarProps) => {
+const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
   const [showAllCategories, setShowAllCategories] = useState(false);
-  const [filters, setFilters] = useState<StoreFilters>({
-    categories: null,
-    priceRange: null,
-    minRating: null,
-  });
 
   const visibleCategories = showAllCategories
     ? categories
     : categories.slice(0, 4);
 
   const handleCategoryChange = (category: string) => {
-    setFilters((previousFilters) => {
-      const currentCategories = previousFilters.categories ?? [];
+    const currentCategories = filters.categories ?? [];
 
-      if (currentCategories.includes(category)) {
-        const updatedCategories = currentCategories.filter(
-          (item) => item !== category,
-        );
+    const updatedCategories = currentCategories.includes(category)
+      ? currentCategories.filter((item) => item !== category)
+      : [...currentCategories, category];
 
-        const updatedFilters = { ...previousFilters, categories: updatedCategories.length ? updatedCategories : null };
-        onFiltersChange(updatedFilters);
-        return updatedFilters;
-      }
-
-      const updatedCategories = [...currentCategories, category];
-
-      const updatedFilters = { ...previousFilters, categories: updatedCategories };
-      onFiltersChange(updatedFilters);
-      return updatedFilters;
+    onFiltersChange({
+      ...filters,
+      categories: updatedCategories.length ? updatedCategories : null,
     });
   };
 
   const handlePriceChange = (priceRange: PriceRange) => {
-    setFilters((previousFilters) => {
-      const sameRange = previousFilters.priceRange?.min === priceRange.min && previousFilters.priceRange?.max === priceRange.max;
-      const updatedFilters = { ...previousFilters, priceRange: sameRange ? null : priceRange };
-      onFiltersChange(updatedFilters);
-      return updatedFilters;
+    const isSameRange =
+      filters.priceRange?.min === priceRange.min &&
+      filters.priceRange?.max === priceRange.max;
+
+    onFiltersChange({
+      ...filters,
+      priceRange: isSameRange ? null : priceRange,
     });
   };
 
   const handleRatingChange = (minRating: number) => {
-    setFilters((previousFilters) => {
-      const updatedFilters = { ...previousFilters, minRating: previousFilters.minRating === minRating ? null : minRating };
-      onFiltersChange(updatedFilters);
-      return updatedFilters;
+    onFiltersChange({
+      ...filters,
+      minRating: filters.minRating === minRating ? null : minRating,
     });
   };
 
   const handleClearAll = () => {
-    const clearedFilters = { categories: null, priceRange: null, minRating: null };
-    setFilters(clearedFilters);
-    onFiltersChange(clearedFilters);
+    onFiltersChange({
+      categories: null,
+      priceRange: null,
+      minRating: null,
+    });
   };
+
+  const hasActiveFilters =
+    Boolean(filters.categories?.length) ||
+    Boolean(filters.priceRange) ||
+    Boolean(filters.minRating);
 
   return (
     <aside className="w-full">
@@ -119,40 +111,60 @@ export const FilterSidebar = ({
             <button
               type="button"
               onClick={handleClearAll}
-              className="text-xs text-blue-500"
+              className="text-xs text-blue-500 hover:bg-blue-100 rounded-full px-2 py-1"
             >
               Clear ALL
             </button>
           </div>
 
-          {(filters.categories?.length || filters.priceRange || filters.minRating) && (
+          {hasActiveFilters && (
             <div className="mt-3 flex flex-wrap gap-2">
               {filters.categories?.map((category) => (
                 <div
                   key={category}
                   className="flex items-center gap-1 rounded-full bg-blue-500 px-2 py-1 text-xs text-white"
                 >
-                  <span>{categories.find((item) => item.value === category)?.label}</span>
+                  <span>
+                    {categories.find((item) => item.value === category)?.label}
+                  </span>
 
                   <button
                     type="button"
                     onClick={() => handleCategoryChange(category)}
                     className="flex h-4 w-4 items-center justify-center rounded hover:bg-blue-600"
                   >
-                    <X />
+                    <X className="size-3" />
                   </button>
                 </div>
               ))}
+
               {filters.priceRange && (
                 <div className="flex items-center gap-1 rounded-full bg-blue-500 px-2 py-1 text-xs text-white">
                   <span>Price</span>
-                  <button type="button" onClick={() => handlePriceChange(filters.priceRange!)} className="flex h-4 w-4 items-center justify-center rounded hover:bg-blue-600" aria-label="Remove price filter"><X className="size-3" /></button>
+
+                  <button
+                    type="button"
+                    onClick={() => handlePriceChange(filters.priceRange!)}
+                    className="flex h-4 w-4 items-center justify-center rounded hover:bg-blue-600"
+                    aria-label="Remove price filter"
+                  >
+                    <X className="size-3" />
+                  </button>
                 </div>
               )}
+
               {filters.minRating && (
                 <div className="flex items-center gap-1 rounded-full bg-blue-500 px-2 py-1 text-xs text-white">
                   <span>{filters.minRating}+ stars</span>
-                  <button type="button" onClick={() => handleRatingChange(filters.minRating!)} className="flex h-4 w-4 items-center justify-center rounded hover:bg-blue-600" aria-label="Remove rating filter"><X className="size-3" /></button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRatingChange(filters.minRating!)}
+                    className="flex h-4 w-4 items-center justify-center rounded hover:bg-blue-600"
+                    aria-label="Remove rating filter"
+                  >
+                    <X className="size-3" />
+                  </button>
                 </div>
               )}
             </div>
@@ -190,7 +202,6 @@ export const FilterSidebar = ({
                         {category.label}
                       </label>
                     </div>
-
                   </div>
                 ))}
               </div>
@@ -198,7 +209,7 @@ export const FilterSidebar = ({
               {categories.length > 4 && (
                 <button
                   type="button"
-                  onClick={() => setShowAllCategories((prev) => !prev)}
+                  onClick={() => setShowAllCategories((previous) => !previous)}
                   className="mt-3 text-sm font-medium text-blue-500 hover:underline"
                 >
                   {showAllCategories ? "Show less" : "Show more"}
@@ -210,15 +221,33 @@ export const FilterSidebar = ({
 
         <Accordion defaultValue={["price"]}>
           <AccordionItem value="price">
-            <AccordionTrigger className="text-base font-semibold hover:no-underline">Price</AccordionTrigger>
+            <AccordionTrigger className="text-base font-semibold hover:no-underline">
+              Price
+            </AccordionTrigger>
+
             <AccordionContent>
               <div className="space-y-2">
                 {priceRanges.map((range) => {
-                  const checked = filters.priceRange?.min === range.value.min && filters.priceRange?.max === range.value.max;
-                  return <div key={range.label} className="flex items-center gap-2">
-                    <Checkbox id={`price-${range.value.min}`} checked={checked} onCheckedChange={() => handlePriceChange(range.value)} />
-                    <label htmlFor={`price-${range.value.min}`} className="cursor-pointer text-sm text-slate-600">{range.label}</label>
-                  </div>;
+                  const checked =
+                    filters.priceRange?.min === range.value.min &&
+                    filters.priceRange?.max === range.value.max;
+
+                  return (
+                    <div key={range.label} className="flex items-center gap-2">
+                      <Checkbox
+                        id={`price-${range.value.min}`}
+                        checked={checked}
+                        onCheckedChange={() => handlePriceChange(range.value)}
+                      />
+
+                      <label
+                        htmlFor={`price-${range.value.min}`}
+                        className="cursor-pointer text-sm text-slate-600"
+                      >
+                        {range.label}
+                      </label>
+                    </div>
+                  );
                 })}
               </div>
             </AccordionContent>
@@ -227,13 +256,26 @@ export const FilterSidebar = ({
 
         <Accordion defaultValue={["rating"]}>
           <AccordionItem value="rating">
-            <AccordionTrigger className="text-base font-semibold hover:no-underline">Customer rating</AccordionTrigger>
+            <AccordionTrigger className="text-base font-semibold hover:no-underline">
+              Customer rating
+            </AccordionTrigger>
+
             <AccordionContent>
               <div className="space-y-2">
                 {ratings.map((rating) => (
                   <div key={rating} className="flex items-center gap-2">
-                    <Checkbox id={`rating-${rating}`} checked={filters.minRating === rating} onCheckedChange={() => handleRatingChange(rating)} />
-                    <label htmlFor={`rating-${rating}`} className="cursor-pointer text-sm text-slate-600">{rating}+ stars</label>
+                    <Checkbox
+                      id={`rating-${rating}`}
+                      checked={filters.minRating === rating}
+                      onCheckedChange={() => handleRatingChange(rating)}
+                    />
+
+                    <label
+                      htmlFor={`rating-${rating}`}
+                      className="cursor-pointer text-sm text-slate-600"
+                    >
+                      {rating}+ stars
+                    </label>
                   </div>
                 ))}
               </div>

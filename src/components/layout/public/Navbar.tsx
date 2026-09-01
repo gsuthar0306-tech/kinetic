@@ -87,12 +87,13 @@ function Navbar() {
                 }`}
             />
           </button>
-          <button
+          <NavLink
+            to={"/login"}
             aria-label="Account"
             className="hidden rounded-full p-2.5 transition-colors hover:bg-slate-100 sm:block"
           >
             <UserRound className="size-5" />
-          </button>
+          </NavLink>
           <button
             aria-label="Shopping bag"
             className="rounded-full p-2.5 transition-colors hover:bg-slate-100"

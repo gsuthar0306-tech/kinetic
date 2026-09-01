@@ -1,13 +1,19 @@
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Collections from "@/components/home/Collections";
-import TrendingHardware from "@/components/home/TrendingHardware";
-import Newsletter from "@/components/home/Newsletter";
+import Collections from "@/features/home/components/Collections";
+import TrendingHardware from "@/features/home/components/TrendingHardware";
+import Newsletter from "@/features/home/components/Newsletter";
 import woodenSpeaker from "@/assets/images/woodenspeaker.webp";
+import { toast } from "sonner";
 
 const Home = () => {
   return (
     <main className="bg-white text-slate-950">
+      <button onClick={() => {
+        toast.success("Account created successfully!", {
+          description: `Welcome to KINETIC,.`,
+        });
+      }}>hi</button>
       <section className="relative h-[calc(100vh-72px)] max-h-[720px] min-h-[520px] overflow-hidden border-b border-slate-800">
         <img
           src={woodenSpeaker}

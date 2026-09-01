@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Heart, ShoppingBag, Star } from "lucide-react";
+
 import {
   getElectronicProducts,
   type Product,
 } from "@/services/products";
+
 import type { StoreFilters } from "./FilterSidebar";
-import type { SortOption, ViewMode } from "./UnderNav";
+import type { SortOption } from "./UnderNav";
 
 interface ProductsProps {
   filters: StoreFilters;
   sortBy: SortOption;
-  view: ViewMode;
   onResultCountChange: (count: number) => void;
 }
 
@@ -21,7 +22,11 @@ const formatPrice = (price: number) =>
     maximumFractionDigits: 0,
   }).format(price);
 
-const Products = ({ filters, sortBy, view, onResultCountChange }: ProductsProps) => {
+const Products = ({
+  filters,
+  sortBy,
+  onResultCountChange,
+}: ProductsProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -41,29 +46,60 @@ const Products = ({ filters, sortBy, view, onResultCountChange }: ProductsProps)
     loadProducts();
   }, []);
 
-  const filteredProducts = products
-    .filter((product) => !filters.categories?.length || filters.categories.includes(product.category))
-    .filter((product) => {
-      if (!filters.priceRange) return true;
-      return product.price >= filters.priceRange.min && product.price <= filters.priceRange.max;
-    })
-    .filter((product) => !filters.minRating || product.rating >= filters.minRating)
-    .sort((first, second) => {
-      if (sortBy === "price-low") return first.price - second.price;
-      if (sortBy === "price-high") return second.price - first.price;
-      if (sortBy === "rating") return second.rating - first.rating;
-      return 0;
+  const filteredProducts = useMemo(() => {
+    const result = products
+      .filter((product) => {
+        if (!filters.categories?.length) {
+          return true;
+        }
+
+        return filters.categories.includes(product.category);
+      })
+      .filter((product) => {
+        if (!filters.priceRange) {
+          return true;
+        }
+
+        return (
+          product.price >= filters.priceRange.min &&
+          product.price <= filters.priceRange.max
+        );
+      })
+      .filter((product) => {
+        if (!filters.minRating) {
+          return true;
+        }
+
+        return product.rating >= filters.minRating;
+      });
+
+    return [...result].sort((first, second) => {
+      switch (sortBy) {
+        case "price-low":
+          return first.price - second.price;
+
+        case "price-high":
+          return second.price - first.price;
+
+        case "rating":
+          return second.rating - first.rating;
+
+        case "recommended":
+        default:
+          return 0;
+      }
     });
+  }, [products, filters, sortBy]);
 
   useEffect(() => {
     onResultCountChange(filteredProducts.length);
   }, [filteredProducts.length, onResultCountChange]);
 
   const toggleFavorite = (productId: number) => {
-    setFavorites((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId],
+    setFavorites((previous) =>
+      previous.includes(productId)
+        ? previous.filter((id) => id !== productId)
+        : [...previous, productId],
     );
   };
 
@@ -79,8 +115,11 @@ const Products = ({ filters, sortBy, view, onResultCountChange }: ProductsProps)
 
             <div className="px-1 pb-1 pt-3">
               <div className="h-3 w-20 animate-pulse rounded bg-slate-100" />
+
               <div className="mt-2 h-4 w-3/4 animate-pulse rounded bg-slate-100" />
+
               <div className="mt-4 h-4 w-1/3 animate-pulse rounded bg-slate-100" />
+
               <div className="mt-3 h-9 animate-pulse rounded-md bg-slate-100" />
             </div>
           </article>
@@ -100,24 +139,24 @@ const Products = ({ filters, sortBy, view, onResultCountChange }: ProductsProps)
   }
 
   return (
-    <section className={view === "grid" ? "grid grid-cols-1 gap-5 p-6 sm:grid-cols-2 lg:grid-cols-3" : "flex flex-col gap-4 p-6"}>
+    <section className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2 lg:grid-cols-3">
       {filteredProducts.map((product) => {
         const isFavorite = favorites.includes(product.id);
 
         return (
           <article
             key={product.id}
-            className={`group rounded-lg border border-slate-200 bg-white p-2 shadow-sm transition-shadow hover:shadow-md sm:p-3 ${view === "list" ? "sm:flex sm:gap-4" : ""}`}
+            className="group rounded-lg border border-slate-200 bg-white p-2 shadow-sm transition-shadow hover:shadow-md sm:p-3"
           >
-            {/* Product Image */}
-            <div className={`relative aspect-square overflow-hidden rounded-md bg-slate-100 ${view === "list" ? "sm:size-40 sm:shrink-0" : ""}`}>
+            <div
+              className="relative aspect-square overflow-hidden rounded-md bg-slate-100"
+            >
               <img
                 src={product.thumbnail}
                 alt={product.title}
                 className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
               />
 
-              {/* Favorite Button */}
               <button
                 type="button"
                 aria-label={
@@ -129,27 +168,23 @@ const Products = ({ filters, sortBy, view, onResultCountChange }: ProductsProps)
                 className="absolute right-2 top-2 rounded-full bg-white/80 p-2.5 backdrop-blur-sm transition-colors hover:bg-white"
               >
                 <Heart
-                  className={`size - 5 transition - colors ${isFavorite
+                  className={`size-5 transition-colors ${isFavorite
                     ? "fill-red-500 text-red-500"
                     : "text-slate-950"
-                    } `}
+                    }`}
                 />
               </button>
             </div>
 
-            {/* Product Information */}
-            <div className={`px-1 pb-1 pt-3 ${view === "list" ? "sm:flex-1" : ""}`}>
-              {/* Category */}
+            <div className="px-1 pb-1 pt-3">
               <p className="truncate text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-400">
                 {product.category.replaceAll("-", " ")}
               </p>
 
-              {/* Title */}
               <h2 className="mt-1 min-h-10 truncate text-sm font-semibold text-slate-900">
                 {product.title}
               </h2>
 
-              {/* Price + Rating */}
               <div className="mt-2 flex items-center justify-between">
                 <span className="text-sm font-bold text-slate-950">
                   {formatPrice(product.price)}
@@ -161,10 +196,9 @@ const Products = ({ filters, sortBy, view, onResultCountChange }: ProductsProps)
                 </span>
               </div>
 
-              {/* Add To Bag */}
               <button
                 type="button"
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-md bg-slate-950 py-2 text-[10px] font-bold tracking-wide text-white transition-colors hover:bg-slate-800"
+                className="mt-3 flex w-full items-center justify-center gap-2 border rounded-md bg-slate-950 py-2 text-[10px] font-bold tracking-wide text-white transition-colors hover:bg-white hover:text-black"
               >
                 <ShoppingBag className="size-3.5" />
                 ADD TO BAG
