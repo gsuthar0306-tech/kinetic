@@ -50,7 +50,10 @@ const priceRanges: { label: string; value: PriceRange }[] = [
 
 const ratings = [4.5, 4, 3.5];
 
-const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
+const FilterSidebar = ({
+  filters,
+  onFiltersChange,
+}: FilterSidebarProps) => {
   const [showAllCategories, setShowAllCategories] = useState(false);
 
   const visibleCategories = showAllCategories
@@ -58,33 +61,63 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
     : categories.slice(0, 4);
 
   const handleCategoryChange = (category: string) => {
-    const currentCategories = filters.categories ?? [];
+    const currentCategories = filters.categories || [];
 
-    const updatedCategories = currentCategories.includes(category)
-      ? currentCategories.filter((item) => item !== category)
-      : [...currentCategories, category];
+    if (currentCategories.includes(category)) {
+      const updatedCategories = currentCategories.filter(
+        (item) => item !== category
+      );
+
+      onFiltersChange({
+        ...filters,
+        categories:
+          updatedCategories.length > 0 ? updatedCategories : null,
+      });
+
+      return;
+    }
+
+    const updatedCategories = [...currentCategories, category];
 
     onFiltersChange({
       ...filters,
-      categories: updatedCategories.length ? updatedCategories : null,
+      categories: updatedCategories,
     });
   };
 
   const handlePriceChange = (priceRange: PriceRange) => {
-    const isSameRange =
+    const isSamePrice =
       filters.priceRange?.min === priceRange.min &&
       filters.priceRange?.max === priceRange.max;
 
+    if (isSamePrice) {
+      onFiltersChange({
+        ...filters,
+        priceRange: null,
+      });
+
+      return;
+    }
+
     onFiltersChange({
       ...filters,
-      priceRange: isSameRange ? null : priceRange,
+      priceRange: priceRange,
     });
   };
 
-  const handleRatingChange = (minRating: number) => {
+  const handleRatingChange = (rating: number) => {
+    if (filters.minRating === rating) {
+      onFiltersChange({
+        ...filters,
+        minRating: null,
+      });
+
+      return;
+    }
+
     onFiltersChange({
       ...filters,
-      minRating: filters.minRating === minRating ? null : minRating,
+      minRating: rating,
     });
   };
 
@@ -97,9 +130,9 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
   };
 
   const hasActiveFilters =
-    Boolean(filters.categories?.length) ||
-    Boolean(filters.priceRange) ||
-    Boolean(filters.minRating);
+    filters.categories !== null ||
+    filters.priceRange !== null ||
+    filters.minRating !== null;
 
   return (
     <aside className="w-full">
@@ -125,7 +158,9 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
                   className="flex items-center gap-1 rounded-full bg-blue-500 px-2 py-1 text-xs text-white"
                 >
                   <span>
-                    {categories.find((item) => item.value === category)?.label}
+                    {categories.find(
+                      (item) => item.value === category
+                    )?.label}
                   </span>
 
                   <button
@@ -144,7 +179,9 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
 
                   <button
                     type="button"
-                    onClick={() => handlePriceChange(filters.priceRange!)}
+                    onClick={() =>
+                      handlePriceChange(filters.priceRange!)
+                    }
                     className="flex h-4 w-4 items-center justify-center rounded hover:bg-blue-600"
                     aria-label="Remove price filter"
                   >
@@ -159,7 +196,9 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
 
                   <button
                     type="button"
-                    onClick={() => handleRatingChange(filters.minRating!)}
+                    onClick={() =>
+                      handleRatingChange(filters.minRating!)
+                    }
                     className="flex h-4 w-4 items-center justify-center rounded hover:bg-blue-600"
                     aria-label="Remove rating filter"
                   >
@@ -188,7 +227,8 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
                       <Checkbox
                         id={category.value}
                         checked={
-                          filters.categories?.includes(category.value) ?? false
+                          filters.categories?.includes(category.value) ??
+                          false
                         }
                         onCheckedChange={() =>
                           handleCategoryChange(category.value)
@@ -209,7 +249,9 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
               {categories.length > 4 && (
                 <button
                   type="button"
-                  onClick={() => setShowAllCategories((previous) => !previous)}
+                  onClick={() =>
+                    setShowAllCategories(!showAllCategories)
+                  }
                   className="mt-3 text-sm font-medium text-blue-500 hover:underline"
                 >
                   {showAllCategories ? "Show less" : "Show more"}
@@ -233,11 +275,16 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
                     filters.priceRange?.max === range.value.max;
 
                   return (
-                    <div key={range.label} className="flex items-center gap-2">
+                    <div
+                      key={range.label}
+                      className="flex items-center gap-2"
+                    >
                       <Checkbox
                         id={`price-${range.value.min}`}
                         checked={checked}
-                        onCheckedChange={() => handlePriceChange(range.value)}
+                        onCheckedChange={() =>
+                          handlePriceChange(range.value)
+                        }
                       />
 
                       <label
@@ -267,7 +314,9 @@ const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
                     <Checkbox
                       id={`rating-${rating}`}
                       checked={filters.minRating === rating}
-                      onCheckedChange={() => handleRatingChange(rating)}
+                      onCheckedChange={() =>
+                        handleRatingChange(rating)
+                      }
                     />
 
                     <label

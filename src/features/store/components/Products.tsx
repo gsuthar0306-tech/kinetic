@@ -34,8 +34,8 @@ const Products = ({
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const productData = await getElectronicProducts();
-        setProducts(productData);
+        const data = await getElectronicProducts();
+        setProducts(data);
       } catch (error) {
         console.error("Failed to load products:", error);
       } finally {
@@ -47,48 +47,47 @@ const Products = ({
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const result = products
-      .filter((product) => {
-        if (!filters.categories?.length) {
-          return true;
-        }
+    let result = products;
 
-        return filters.categories.includes(product.category);
-      })
-      .filter((product) => {
-        if (!filters.priceRange) {
-          return true;
-        }
+    if (filters.categories) {
+      result = result.filter((product) =>
+        filters.categories!.includes(product.category)
+      );
+    }
 
-        return (
-          product.price >= filters.priceRange.min &&
-          product.price <= filters.priceRange.max
-        );
-      })
-      .filter((product) => {
-        if (!filters.minRating) {
-          return true;
-        }
+    if (filters.priceRange) {
+      result = result.filter(
+        (product) =>
+          product.price >= filters.priceRange!.min &&
+          product.price <= filters.priceRange!.max
+      );
+    }
 
-        return product.rating >= filters.minRating;
-      });
+    if (filters.minRating) {
+      result = result.filter(
+        (product) => product.rating >= filters.minRating!
+      );
+    }
 
-    return [...result].sort((first, second) => {
-      switch (sortBy) {
-        case "price-low":
-          return first.price - second.price;
+    if (sortBy === "price-low") {
+      result = [...result].sort(
+        (first, second) => first.price - second.price
+      );
+    }
 
-        case "price-high":
-          return second.price - first.price;
+    if (sortBy === "price-high") {
+      result = [...result].sort(
+        (first, second) => second.price - first.price
+      );
+    }
 
-        case "rating":
-          return second.rating - first.rating;
+    if (sortBy === "rating") {
+      result = [...result].sort(
+        (first, second) => second.rating - first.rating
+      );
+    }
 
-        case "recommended":
-        default:
-          return 0;
-      }
-    });
+    return result;
   }, [products, filters, sortBy]);
 
   useEffect(() => {
@@ -96,11 +95,19 @@ const Products = ({
   }, [filteredProducts.length, onResultCountChange]);
 
   const toggleFavorite = (productId: number) => {
-    setFavorites((previous) =>
-      previous.includes(productId)
-        ? previous.filter((id) => id !== productId)
-        : [...previous, productId],
-    );
+    if (favorites.includes(productId)) {
+      const newFavorites = favorites.filter(
+        (id) => id !== productId
+      );
+
+      setFavorites(newFavorites);
+
+      return;
+    }
+
+    const newFavorites = [...favorites, productId];
+
+    setFavorites(newFavorites);
   };
 
   if (loading) {
@@ -148,9 +155,7 @@ const Products = ({
             key={product.id}
             className="group rounded-lg border border-slate-200 bg-white p-2 shadow-sm transition-shadow hover:shadow-md sm:p-3"
           >
-            <div
-              className="relative aspect-square overflow-hidden rounded-md bg-slate-100"
-            >
+            <div className="relative aspect-square overflow-hidden rounded-md bg-slate-100">
               <img
                 src={product.thumbnail}
                 alt={product.title}

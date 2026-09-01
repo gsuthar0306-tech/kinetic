@@ -1,8 +1,11 @@
 import { useState } from "react";
+
 import FilterSidebar, {
   type StoreFilters,
 } from "@/features/store/components/FilterSidebar";
+
 import Products from "@/features/store/components/Products";
+
 import UnderNav, {
   type SortOption,
 } from "@/features/store/components/UnderNav";
@@ -28,10 +31,7 @@ const Store = () => {
 
       <div className="flex min-h-0 flex-1">
         <aside className="w-64 shrink-0 overflow-hidden border-r border-slate-200 bg-white">
-          <FilterSidebar
-            filters={filters}
-            onFiltersChange={setFilters}
-          />
+          <FilterSidebar filters={filters} onFiltersChange={setFilters} />
         </aside>
 
         <main className="min-w-0 flex-1 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">

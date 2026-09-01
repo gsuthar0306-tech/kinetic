@@ -51,14 +51,16 @@ const UnderNav = ({
     return () => {
       document.removeEventListener(
         "mousedown",
-        handleOutsideClick,
+        handleOutsideClick
       );
     };
   }, []);
 
-  const currentLabel =
-    sortOptions.find((option) => option.value === sortBy)?.label ??
-    "Recommended";
+  const currentOption = sortOptions.find(
+    (option) => option.value === sortBy
+  );
+
+  const currentLabel = currentOption?.label ?? "Recommended";
 
   return (
     <section className="shrink-0 border-b border-slate-200 px-6 py-5">
@@ -93,14 +95,16 @@ const UnderNav = ({
           <div ref={rootRef} className="relative">
             <button
               type="button"
-              onClick={() => setOpen((previous) => !previous)}
+              onClick={() => setOpen(!open)}
               aria-haspopup="listbox"
               aria-expanded={open}
               className="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-700 transition-colors hover:border-slate-300"
             >
               <span className="text-slate-400">Sort by</span>
 
-              <span className="font-medium">{currentLabel}</span>
+              <span className="font-medium">
+                {currentLabel}
+              </span>
 
               <ChevronDown
                 className={`size-4 text-slate-400 transition-transform ${open ? "rotate-180" : ""
