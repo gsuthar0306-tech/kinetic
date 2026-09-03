@@ -4,27 +4,21 @@ import Collections from "@/features/home/components/Collections";
 import TrendingHardware from "@/features/home/components/TrendingHardware";
 import Newsletter from "@/features/home/components/Newsletter";
 import woodenSpeaker from "@/assets/images/woodenspeaker.webp";
-import { toast } from "sonner";
 
 const Home = () => {
   return (
     <main className="bg-white text-slate-950">
-      <button onClick={() => {
-        toast.success("Account created successfully!", {
-          description: `Welcome to KINETIC,.`,
-        });
-      }}>hi</button>
-      <section className="relative h-[calc(100vh-72px)] max-h-[720px] min-h-[520px] overflow-hidden border-b border-slate-800">
+      <section className="relative h-[min(720px,calc(100svh-4rem))] min-h-[480px] overflow-hidden border-b border-slate-800 sm:h-[min(720px,calc(100svh-4.5rem))] sm:min-h-[520px]">
         <img
           src={woodenSpeaker}
           alt="Obsidian Series wooden speaker"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
 
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.68)_0%,rgba(0,0,0,0.5)_22%,rgba(0,0,0,0.25)_38%,transparent_55%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0.5)_42%,transparent_78%)] sm:bg-[linear-gradient(90deg,rgba(0,0,0,0.68)_0%,rgba(0,0,0,0.5)_22%,rgba(0,0,0,0.25)_38%,transparent_55%)]" />
 
         <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-5 sm:px-8">
-          <div className="max-w-[31rem]">
+          <div className="max-w-[31rem] pb-4 sm:pb-0">
             <p className="mb-4 text-[10px] font-semibold tracking-[0.2em] text-blue-300 sm:text-xs">
               INTRODUCING
             </p>

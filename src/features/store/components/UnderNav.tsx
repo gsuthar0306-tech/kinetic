@@ -20,15 +20,15 @@ const sortOptions: {
   label: string;
   value: SortOption;
 }[] = [
-    { label: "Recommended", value: "recommended" },
-    { label: "Price: low to high", value: "price-low" },
-    { label: "Price: high to low", value: "price-high" },
-    { label: "Top rated", value: "rating" },
-  ];
+  { label: "Recommended", value: "recommended" },
+  { label: "Price: low to high", value: "price-low" },
+  { label: "Price: high to low", value: "price-high" },
+  { label: "Top rated", value: "rating" },
+];
 
 const UnderNav = ({ sortBy, onSortChange, resultCount }: UnderNavProps) => {
   return (
-    <section className="shrink-0 border-b border-slate-200 px-6 py-5">
+    <section className="shrink-0 border-b border-slate-200 px-4 py-4 sm:px-6 sm:py-5">
       <nav
         aria-label="Breadcrumb"
         className="mb-1 flex items-center gap-1.5 text-sm text-slate-500"
@@ -44,8 +44,8 @@ const UnderNav = ({ sortBy, onSortChange, resultCount }: UnderNavProps) => {
 
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="flex items-baseline gap-2.5">
-            <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
+          <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
               Computing gear
             </h2>
 
@@ -59,7 +59,7 @@ const UnderNav = ({ sortBy, onSortChange, resultCount }: UnderNavProps) => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex w-full items-center justify-between gap-3 text-sm sm:w-auto sm:justify-start">
           <span className="whitespace-nowrap text-slate-600 font-bold">
             Sort by:
           </span>
@@ -68,7 +68,7 @@ const UnderNav = ({ sortBy, onSortChange, resultCount }: UnderNavProps) => {
             value={sortBy}
             onValueChange={(value) => onSortChange(value as SortOption)}
           >
-            <SelectTrigger className="h-10 w-[170px] rounded-md border border-slate-200 bg-white px-3 text-sm font-normal text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-slate-400 focus:ring-2 focus:ring-slate-100">
+            <SelectTrigger className="h-10 w-[min(10.625rem,55vw)] rounded-md border border-slate-200 bg-white px-3 text-sm font-normal text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-slate-400 focus:ring-2 focus:ring-slate-100">
               <SelectValue />
             </SelectTrigger>
 

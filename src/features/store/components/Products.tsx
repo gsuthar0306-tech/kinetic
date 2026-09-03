@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Heart, ShoppingBag, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { useNavigate } from "react-router";
 
 import { getElectronicProducts, type Product } from "@/services/products";
@@ -7,8 +7,8 @@ import { getElectronicProducts, type Product } from "@/services/products";
 import type { StoreFilters } from "./FilterSidebar";
 import type { SortOption } from "./UnderNav";
 
-import { useFavorites } from "@/context/useFavorites";
-import { useCart } from "@/context/useCart";
+import AddToBag from "@/components/subComponents/AddTobag";
+import AddtoHeart from "@/components/subComponents/AddtoHeart";
 
 interface ProductsProps {
   filters: StoreFilters;
@@ -28,12 +28,6 @@ const Products = ({ filters, sortBy, onResultCountChange }: ProductsProps) => {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-
-  // Get favorites functionality from FavoritesContext
-  const { toggleFavorite, isFavorite } = useFavorites();
-
-  // Get cart functionality from CartContext
-  const { addToCart, isInCart } = useCart();
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -132,9 +126,6 @@ const Products = ({ filters, sortBy, onResultCountChange }: ProductsProps) => {
   return (
     <section className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2 lg:grid-cols-3">
       {filteredProducts.map((product) => {
-        const favorite = isFavorite(product.id);
-        const inCart = isInCart(product.id);
-
         return (
           <article
             key={product.id}
@@ -148,24 +139,7 @@ const Products = ({ filters, sortBy, onResultCountChange }: ProductsProps) => {
                 className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
               />
 
-              {/* Favorite button */}
-              <button
-                type="button"
-                aria-label={
-                  favorite ? "Remove from favorites" : "Add to favorites"
-                }
-                onClick={(event) => {
-                  event.stopPropagation();
-                  toggleFavorite(product.id);
-                }}
-                className="absolute right-2 top-2 rounded-full bg-white/80 p-2.5 backdrop-blur-sm transition-colors hover:bg-white"
-              >
-                <Heart
-                  className={`size-5 transition-colors ${
-                    favorite ? "fill-red-500 text-red-500" : "text-slate-950"
-                  }`}
-                />
-              </button>
+              <AddtoHeart productId={product.id} variant="detail" />
             </div>
 
             <div className="px-1 pb-1 pt-3">
@@ -188,23 +162,7 @@ const Products = ({ filters, sortBy, onResultCountChange }: ProductsProps) => {
                 </span>
               </div>
 
-              {/* Add to cart button */}
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  addToCart(product);
-                }}
-                className={`mt-3 flex w-full items-center justify-center gap-2 rounded-md border py-2 text-[10px] font-bold tracking-wide transition-colors ${
-                  inCart
-                    ? "border-slate-400 bg-slate-400 text-white"
-                    : "border-slate-950 bg-slate-950 text-white"
-                }`}
-              >
-                <ShoppingBag className="size-3.5" />
-
-                {inCart ? "ADDED TO BAG" : "ADD TO BAG"}
-              </button>
+              <AddToBag product={product} variant="card" />
             </div>
           </article>
         );

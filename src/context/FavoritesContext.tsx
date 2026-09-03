@@ -6,9 +6,7 @@ type FavoritesContextType = {
   isFavorite: (productId: number) => boolean;
 };
 
-export const FavoritesContext = createContext<FavoritesContextType | null>(
-  null,
-);
+const FavoritesContext = createContext<FavoritesContextType | null>(null);
 
 type FavoritesProviderProps = {
   children: ReactNode;
@@ -42,4 +40,14 @@ export function FavoritesProvider({ children }: FavoritesProviderProps) {
       {children}
     </FavoritesContext.Provider>
   );
+}
+
+export function useFavorites() {
+  const context = useContext(FavoritesContext);
+
+  if (context === null) {
+    throw new Error("useFavorites must be used inside a FavoritesProvider");
+  }
+
+  return context;
 }

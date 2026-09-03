@@ -10,6 +10,7 @@ import { Toaster } from "./components/ui/sonner";
 import ProductDetails from "./pages/ProductDetails/ProductDetails";
 import { FavoritesProvider } from "./context/FavoritesContext";
 import { CartProvider } from "./context/CartContext";
+import { Profile } from "./pages/User/Profile";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/store" element={<StorePage />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
+                <Route path="/profile" element={<Profile />} />
               </Route>
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<LoginForm />} />

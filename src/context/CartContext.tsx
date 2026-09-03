@@ -1,4 +1,4 @@
-import { createContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 import type { Product } from "@/services/products";
 
@@ -16,7 +16,7 @@ type CartContextType = {
   isInCart: (productId: number) => boolean;
 };
 
-export const CartContext = createContext<CartContextType | null>(null);
+const CartContext = createContext<CartContextType | null>(null);
 
 type CartProviderProps = {
   children: ReactNode;
@@ -104,4 +104,14 @@ export function CartProvider({ children }: CartProviderProps) {
       {children}
     </CartContext.Provider>
   );
+}
+
+export function useCart() {
+  const context = useContext(CartContext);
+
+  if (context === null) {
+    throw new Error("useCart must be used inside a CartProvider");
+  }
+
+  return context;
 }

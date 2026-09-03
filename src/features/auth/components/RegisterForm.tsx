@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import {
+  getStoredAccounts,
+  saveStoredAccounts,
+  type StoredAccount,
+} from "../authStorage";
 
 export function RegisterForm() {
   const navigate = useNavigate();
@@ -33,55 +38,47 @@ export function RegisterForm() {
         .min(8, "Password must be at least 8 characters.")
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-          "Password must contain uppercase, lowercase, number and special character."
+          "Password must contain uppercase, lowercase, number and special character.",
         ),
 
       confirmation: Yup.string()
         .required("Please confirm your password.")
-        .oneOf(
-          [Yup.ref("password")],
-          "Your passwords do not match."
-        ),
+        .oneOf([Yup.ref("password")], "Your passwords do not match."),
     }),
 
     onSubmit: (values) => {
       const name = values.name.trim();
       const email = values.email.trim().toLowerCase();
 
-      const account = {
+      const account: StoredAccount = {
         name,
         email,
         password: values.password,
       };
 
-      localStorage.setItem(
-        "kinetic-account",
-        JSON.stringify(account)
-      );
+      const existingAccounts = getStoredAccounts();
 
-      localStorage.setItem(
-        "kinetic-session",
-        JSON.stringify({
-          name,
-          email,
-        })
-      );
+      const userExists = existingAccounts.some((user) => user.email === email);
+
+      if (userExists) {
+        toast.error("An account with this email already exists.");
+        return;
+      }
+
+      const updatedAccounts = [...existingAccounts, account];
+      saveStoredAccounts(updatedAccounts);
 
       toast.success("Account created successfully!", {
         description: `Welcome to KINETIC, ${name}.`,
       });
 
-      navigate("/");
+      navigate("/login");
     },
   });
 
   return (
-    <form
-      className="flex flex-col gap-6"
-      onSubmit={formik.handleSubmit}
-    >
+    <form className="flex flex-col gap-6" onSubmit={formik.handleSubmit}>
       <FieldGroup className="lg:gap-4">
-        {/* Heading */}
         <div className="flex flex-col gap-2">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
             Join KINETIC
@@ -96,11 +93,8 @@ export function RegisterForm() {
           </p>
         </div>
 
-        {/* Name */}
         <Field>
-          <FieldLabel htmlFor="name">
-            Full name
-          </FieldLabel>
+          <FieldLabel htmlFor="name">Full name</FieldLabel>
 
           <Input
             id="name"
@@ -113,17 +107,12 @@ export function RegisterForm() {
           />
 
           {formik.touched.name && formik.errors.name && (
-            <p className="text-sm text-red-600">
-              {formik.errors.name}
-            </p>
+            <p className="text-sm text-red-600">{formik.errors.name}</p>
           )}
         </Field>
 
-        {/* Email */}
         <Field>
-          <FieldLabel htmlFor="email">
-            Email
-          </FieldLabel>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
 
           <Input
             id="email"
@@ -137,17 +126,12 @@ export function RegisterForm() {
           />
 
           {formik.touched.email && formik.errors.email && (
-            <p className="text-sm text-red-600">
-              {formik.errors.email}
-            </p>
+            <p className="text-sm text-red-600">{formik.errors.email}</p>
           )}
         </Field>
 
-        {/* Password */}
         <Field>
-          <FieldLabel htmlFor="password">
-            Password
-          </FieldLabel>
+          <FieldLabel htmlFor="password">Password</FieldLabel>
 
           <Input
             id="password"
@@ -160,17 +144,12 @@ export function RegisterForm() {
           />
 
           {formik.touched.password && formik.errors.password && (
-            <p className="text-sm text-red-600">
-              {formik.errors.password}
-            </p>
+            <p className="text-sm text-red-600">{formik.errors.password}</p>
           )}
         </Field>
 
-        {/* Confirm Password */}
         <Field>
-          <FieldLabel htmlFor="confirmation">
-            Confirm password
-          </FieldLabel>
+          <FieldLabel htmlFor="confirmation">Confirm password</FieldLabel>
 
           <Input
             id="confirmation"
@@ -182,15 +161,11 @@ export function RegisterForm() {
             onBlur={formik.handleBlur}
           />
 
-          {formik.touched.confirmation &&
-            formik.errors.confirmation && (
-              <p className="text-sm text-red-600">
-                {formik.errors.confirmation}
-              </p>
-            )}
+          {formik.touched.confirmation && formik.errors.confirmation && (
+            <p className="text-sm text-red-600">{formik.errors.confirmation}</p>
+          )}
         </Field>
 
-        {/* Submit */}
         <Field>
           <Button
             type="submit"
@@ -201,7 +176,6 @@ export function RegisterForm() {
           </Button>
         </Field>
 
-        {/* Login */}
         <p className="text-center text-sm text-slate-500">
           Already have an account?{" "}
           <NavLink
