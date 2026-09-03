@@ -8,24 +8,30 @@ import HomePage from "@/pages/home/HomePage";
 import StorePage from "@/pages/store/StorePage";
 import { Toaster } from "./components/ui/sonner";
 import ProductDetails from "./pages/ProductDetails/ProductDetails";
+import { FavoritesProvider } from "./context/FavoritesContext";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   return (
     <>
-      <div className="min-h-screen container mx-auto bg-white scrollbar-thin scrollbar-thumb-amber-100">
-        <Routes>
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/store" element={<StorePage />} />
-            <Route path="/productdetails" element={<ProductDetails />} />
-          </Route>
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/register" element={<RegisterForm />} />
-          </Route>
-        </Routes>
-        <Toaster />
-      </div>
+      <FavoritesProvider>
+        <CartProvider>
+          <div className="min-h-screen container mx-auto bg-white scrollbar-thin scrollbar-thumb-amber-100">
+            <Routes>
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/store" element={<StorePage />} />
+                <Route path="/product/:id" element={<ProductDetails />} />
+              </Route>
+              <Route element={<AuthLayout />}>
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<RegisterForm />} />
+              </Route>
+            </Routes>
+            <Toaster />
+          </div>
+        </CartProvider>
+      </FavoritesProvider>
     </>
   );
 }
