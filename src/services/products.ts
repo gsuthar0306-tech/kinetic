@@ -55,7 +55,7 @@ export const electronicsStoreCategories: string[] = [
   "Networking",
 
   "Smart Home",
-  "Wearables",
+  "Smart Watches",
 
   "Printers & Scanners",
 ];

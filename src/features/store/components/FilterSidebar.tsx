@@ -31,14 +31,10 @@ interface FilterSidebarProps {
 }
 
 const categories: Category[] = [
-  { label: "Laptops", value: "laptops" },
+  { label: "Computers & Laptops", value: "laptops" },
   { label: "Smartphones", value: "smartphones" },
   { label: "Tablets", value: "tablets" },
   { label: "Mobile Accessories", value: "mobile-accessories" },
-  { label: "Audio", value: "audio" },
-  { label: "Gaming", value: "gaming" },
-  { label: "Cameras", value: "cameras" },
-  { label: "Smart Home", value: "smart-home" },
 ];
 
 const priceRanges: { label: string; value: PriceRange }[] = [

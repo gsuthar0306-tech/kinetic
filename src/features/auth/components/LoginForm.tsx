@@ -45,7 +45,7 @@ export function LoginForm({
     <form className={cn("flex flex-col gap-6", className)} onSubmit={handleSubmit} {...props}>
       <FieldGroup className="lg:gap-4">
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">Welcome back</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">CONNECT TO <span className="text-sm font-black tracking-[0.16em]">KINETIC</span></p>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">Sign in to KINETIC</h1>
           <p className="text-sm leading-6 text-slate-500">
             Enter your details to access your KINETIC account.

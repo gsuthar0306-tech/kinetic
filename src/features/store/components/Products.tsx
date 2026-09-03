@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 
-import {
-  getElectronicProducts,
-  type Product,
-} from "@/services/products";
+import { getElectronicProducts, type Product } from "@/services/products";
 
 import type { StoreFilters } from "./FilterSidebar";
 import type { SortOption } from "./UnderNav";
+import { useNavigate } from "react-router";
 
 interface ProductsProps {
   filters: StoreFilters;
@@ -22,11 +20,7 @@ const formatPrice = (price: number) =>
     maximumFractionDigits: 0,
   }).format(price);
 
-const Products = ({
-  filters,
-  sortBy,
-  onResultCountChange,
-}: ProductsProps) => {
+const Products = ({ filters, sortBy, onResultCountChange }: ProductsProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -46,12 +40,22 @@ const Products = ({
     loadProducts();
   }, []);
 
+  const [addedProducts, setAddedProducts] = useState<number[]>([]);
+
+  const navigate = useNavigate();
+
+  const handleProductClick = (product: Product) => {
+    navigate(`/product/${product.id}`, {
+      state: { product },
+    });
+  };
+
   const filteredProducts = useMemo(() => {
     let result = products;
 
     if (filters.categories) {
       result = result.filter((product) =>
-        filters.categories!.includes(product.category)
+        filters.categories!.includes(product.category),
       );
     }
 
@@ -59,31 +63,25 @@ const Products = ({
       result = result.filter(
         (product) =>
           product.price >= filters.priceRange!.min &&
-          product.price <= filters.priceRange!.max
+          product.price <= filters.priceRange!.max,
       );
     }
 
     if (filters.minRating) {
-      result = result.filter(
-        (product) => product.rating >= filters.minRating!
-      );
+      result = result.filter((product) => product.rating >= filters.minRating!);
     }
 
     if (sortBy === "price-low") {
-      result = [...result].sort(
-        (first, second) => first.price - second.price
-      );
+      result = [...result].sort((first, second) => first.price - second.price);
     }
 
     if (sortBy === "price-high") {
-      result = [...result].sort(
-        (first, second) => second.price - first.price
-      );
+      result = [...result].sort((first, second) => second.price - first.price);
     }
 
     if (sortBy === "rating") {
       result = [...result].sort(
-        (first, second) => second.rating - first.rating
+        (first, second) => second.rating - first.rating,
       );
     }
 
@@ -96,9 +94,7 @@ const Products = ({
 
   const toggleFavorite = (productId: number) => {
     if (favorites.includes(productId)) {
-      const newFavorites = favorites.filter(
-        (id) => id !== productId
-      );
+      const newFavorites = favorites.filter((id) => id !== productId);
 
       setFavorites(newFavorites);
 
@@ -138,9 +134,7 @@ const Products = ({
   if (!filteredProducts.length) {
     return (
       <div className="flex min-h-60 items-center justify-center p-6">
-        <p className="text-sm text-slate-600">
-          No products found.
-        </p>
+        <p className="text-sm text-slate-600">No products found.</p>
       </div>
     );
   }
@@ -153,6 +147,7 @@ const Products = ({
         return (
           <article
             key={product.id}
+            onClick={() => handleProductClick(product)}
             className="group rounded-lg border border-slate-200 bg-white p-2 shadow-sm transition-shadow hover:shadow-md sm:p-3"
           >
             <div className="relative aspect-square overflow-hidden rounded-md bg-slate-100">
@@ -165,18 +160,15 @@ const Products = ({
               <button
                 type="button"
                 aria-label={
-                  isFavorite
-                    ? "Remove from favorites"
-                    : "Add to favorites"
+                  isFavorite ? "Remove from favorites" : "Add to favorites"
                 }
                 onClick={() => toggleFavorite(product.id)}
                 className="absolute right-2 top-2 rounded-full bg-white/80 p-2.5 backdrop-blur-sm transition-colors hover:bg-white"
               >
                 <Heart
-                  className={`size-5 transition-colors ${isFavorite
-                    ? "fill-red-500 text-red-500"
-                    : "text-slate-950"
-                    }`}
+                  className={`size-5 transition-colors ${
+                    isFavorite ? "fill-red-500 text-red-500" : "text-slate-950"
+                  }`}
                 />
               </button>
             </div>
@@ -203,10 +195,23 @@ const Products = ({
 
               <button
                 type="button"
-                className="mt-3 flex w-full items-center justify-center gap-2 border rounded-md bg-slate-950 py-2 text-[10px] font-bold tracking-wide text-white transition-colors hover:bg-white hover:text-black"
+                className={`mt-3 flex w-full items-center justify-center gap-2 rounded-md border py-2 text-[10px] font-bold tracking-wide transition-colors ${
+                  addedProducts.includes(product.id)
+                    ? "text-white bg-slate-400 border-0 outline-3 outline-slate-500"
+                    : "bg-slate-950 text-white border-slate-950"
+                }`}
+                onClick={() => {
+                  setAddedProducts((prev) =>
+                    prev.includes(product.id)
+                      ? prev.filter((id) => id !== product.id)
+                      : [...prev, product.id],
+                  );
+                }}
               >
                 <ShoppingBag className="size-3.5" />
-                ADD TO BAG
+                {addedProducts.includes(product.id)
+                  ? "ADDED TO BAG"
+                  : "ADD TO BAG"}
               </button>
             </div>
           </article>

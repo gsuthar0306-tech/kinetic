@@ -1,16 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  Home,
-  ChevronRight,
-  ChevronDown,
-  Check,
-} from "lucide-react";
+import { Home, ChevronRight } from "lucide-react";
 
-export type SortOption =
-  | "recommended"
-  | "price-low"
-  | "price-high"
-  | "rating";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+export type SortOption = "recommended" | "price-low" | "price-high" | "rating";
 
 interface UnderNavProps {
   sortBy: SortOption;
@@ -28,40 +26,7 @@ const sortOptions: {
     { label: "Top rated", value: "rating" },
   ];
 
-const UnderNav = ({
-  sortBy,
-  onSortChange,
-  resultCount,
-}: UnderNavProps) => {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        rootRef.current &&
-        !rootRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleOutsideClick
-      );
-    };
-  }, []);
-
-  const currentOption = sortOptions.find(
-    (option) => option.value === sortBy
-  );
-
-  const currentLabel = currentOption?.label ?? "Recommended";
-
+const UnderNav = ({ sortBy, onSortChange, resultCount }: UnderNavProps) => {
   return (
     <section className="shrink-0 border-b border-slate-200 px-6 py-5">
       <nav
@@ -69,8 +34,11 @@ const UnderNav = ({
         className="mb-1 flex items-center gap-1.5 text-sm text-slate-500"
       >
         <Home className="size-3.5" />
+
         <span>Home</span>
+
         <ChevronRight className="size-3.5 text-slate-300" />
+
         <span className="text-slate-700">Electronics</span>
       </nav>
 
@@ -91,55 +59,34 @@ const UnderNav = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div ref={rootRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setOpen(!open)}
-              aria-haspopup="listbox"
-              aria-expanded={open}
-              className="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-700 transition-colors hover:border-slate-300"
+        <div className="flex items-center gap-3 text-sm">
+          <span className="whitespace-nowrap text-slate-600 font-bold">
+            Sort by:
+          </span>
+
+          <Select
+            value={sortBy}
+            onValueChange={(value) => onSortChange(value as SortOption)}
+          >
+            <SelectTrigger className="h-10 w-[170px] rounded-md border border-slate-200 bg-white px-3 text-sm font-normal text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-slate-400 focus:ring-2 focus:ring-slate-100">
+              <SelectValue />
+            </SelectTrigger>
+
+            <SelectContent
+              sideOffset={6}
+              className="w-[170px] rounded-md border border-slate-200 bg-white p-1 shadow-lg"
             >
-              <span className="text-slate-400">Sort by</span>
-
-              <span className="font-medium">
-                {currentLabel}
-              </span>
-
-              <ChevronDown
-                className={`size-4 text-slate-400 transition-transform ${open ? "rotate-180" : ""
-                  }`}
-              />
-            </button>
-
-            {open && (
-              <ul
-                role="listbox"
-                className="absolute right-0 z-10 mt-1.5 w-56 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg shadow-slate-900/5"
-              >
-                {sortOptions.map((option) => (
-                  <li key={option.value}>
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={sortBy === option.value}
-                      onClick={() => {
-                        onSortChange(option.value);
-                        setOpen(false);
-                      }}
-                      className="flex w-full items-center justify-between px-3.5 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-                    >
-                      {option.label}
-
-                      {sortBy === option.value && (
-                        <Check className="size-4 text-indigo-600" />
-                      )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+              {sortOptions.map((option) => (
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-9 cursor-pointer rounded-sm px-3 text-sm text-slate-700 outline-none focus:bg-slate-100 focus:text-slate-900 data-[state=checked]:bg-slate-50"
+                >
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </section>

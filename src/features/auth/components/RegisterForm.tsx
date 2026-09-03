@@ -211,10 +211,6 @@ export function RegisterForm() {
             Sign in
           </NavLink>
         </p>
-
-        <p className="text-center text-xs leading-5 text-slate-400">
-          For now, account information is stored only in this browser.
-        </p>
       </FieldGroup>
     </form>
   );

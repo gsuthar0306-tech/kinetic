@@ -12,6 +12,7 @@ const formatPrice = (price: number) =>
 const TrendingHardware = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [addedProducts, setAddedProducts] = useState<number[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -110,8 +111,28 @@ const TrendingHardware = () => {
                         </span>
                       )}
                     </div>
-                    <button className="mt-3 flex w-full items-center justify-center gap-2 rounded-md bg-slate-950 py-2 text-[10px] font-bold tracking-wide text-white transition-colors hover:bg-slate-800">
-                      <ShoppingBag className="size-3.5" /> ADD TO BAG
+                    <button
+                      type="button"
+                      disabled={!item}
+                      onClick={() => {
+                        if (!item) return;
+
+                        setAddedProducts((prev) =>
+                          prev.includes(item.id)
+                            ? prev.filter((id) => id !== item.id)
+                            : [...prev, item.id],
+                        );
+                      }}
+                      className={`mt-3 flex w-full items-center justify-center gap-2 rounded-md border py-2 text-[10px] font-bold tracking-wide transition-colors ${
+                        item && addedProducts.includes(item.id)
+                          ? "border-slate-950 bg-white text-slate-950 hover:bg-slate-100"
+                          : "border-slate-950 bg-slate-950 text-white hover:bg-slate-800"
+                      }`}
+                    >
+                      <ShoppingBag className="size-3.5" />
+                      {item && addedProducts.includes(item.id)
+                        ? "ADDED TO BAG"
+                        : "ADD TO BAG"}
                     </button>
                   </div>
                 </article>

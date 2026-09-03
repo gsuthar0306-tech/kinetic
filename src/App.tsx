@@ -7,6 +7,7 @@ import { RegisterForm } from "@/features/auth/components/RegisterForm";
 import HomePage from "@/pages/home/HomePage";
 import StorePage from "@/pages/store/StorePage";
 import { Toaster } from "./components/ui/sonner";
+import ProductDetails from "./pages/ProductDetails/ProductDetails";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route element={<PublicLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/store" element={<StorePage />} />
+            <Route path="/productdetails" element={<ProductDetails />} />
           </Route>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<LoginForm />} />
