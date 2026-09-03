@@ -89,3 +89,14 @@ export async function getElectronicProducts(): Promise<Product[]> {
     electronicsCategories.has(product.category),
   );
 }
+
+export async function getProductById(id: number): Promise<Product | null> {
+  try {
+    const { data } = await productsApi.get<Product>(`/products/${id}`);
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch product:", error);
+    return null;
+  }
+}
