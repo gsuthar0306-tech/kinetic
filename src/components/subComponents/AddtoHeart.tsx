@@ -1,5 +1,6 @@
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 import { useFavorites } from "@/context/FavoritesContext";
 
@@ -11,11 +12,20 @@ interface AddtoHeartProps {
 const AddtoHeart = ({ productId, variant = "card" }: AddtoHeartProps) => {
   const { toggleFavorite, isFavorite } = useFavorites();
 
+  const navigate = useNavigate();
+
   const favorite = isFavorite(productId);
+
+  const session = localStorage.getItem("kinetic-session");
+  const isLoggedIn = Boolean(session);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
 
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
     if (favorite) {
       toggleFavorite(productId);
 

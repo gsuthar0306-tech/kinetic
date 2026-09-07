@@ -11,19 +11,23 @@ import ProductDetails from "./pages/ProductDetails/ProductDetails";
 import { FavoritesProvider } from "./context/FavoritesContext";
 import { CartProvider } from "./context/CartContext";
 import { Profile } from "./pages/User/Profile";
+import Cart from "./pages/Cart/Cart";
+import Favorites from "./pages/Favorites/Favorites";
 
 function App() {
   return (
     <>
       <FavoritesProvider>
         <CartProvider>
-          <div className="min-h-screen container mx-auto bg-white scrollbar-thin scrollbar-thumb-amber-100">
+          <div className="min-h-screen container mx-auto bg-white">
             <Routes>
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/store" element={<StorePage />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/favorites" element={<Favorites />} />
               </Route>
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<LoginForm />} />

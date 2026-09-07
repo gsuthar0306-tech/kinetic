@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router";
+import { useNavigate, NavLink } from "react-router";
 import { Heart, Menu, Search, ShoppingBag, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,7 @@ import {
 type NavLinkItem = {
   label: string;
   href: string;
+  icon?: React.ComponentType<{ className?: string }>;
 };
 
 const navLinks: NavLinkItem[] = [
@@ -25,17 +26,23 @@ const navLinks: NavLinkItem[] = [
     href: "/store",
   },
   {
-    label: "Smart Home",
-    href: "/store/smart-home",
+    label: "Favorites",
+    href: "/favorites",
+    icon: Heart,
   },
   {
-    label: "User",
-    href: "/profile",
+    label: "Cart",
+    href: "/cart",
+    icon: ShoppingBag,
   },
 ];
 
 function Navbar() {
   const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
+
+  const session = localStorage.getItem("kinetic-session");
+  const isLoggedIn = Boolean(session);
 
   return (
     <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -63,8 +70,9 @@ function Navbar() {
             </NavLink>
           ))}
         </div>
-        <label className="ml-auto hidden max-w-xs flex-1 items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-slate-500 md:flex">
-          <Search className="size-4" />
+        <label className="flex w-full items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-slate-500 md:max-w-xs">
+          <Search className="size-4 shrink-0" />
+
           <input
             className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
             type="search"
@@ -72,13 +80,8 @@ function Navbar() {
           />
         </label>
         <div className="flex items-center gap-1 text-slate-700">
-          <button
-            aria-label="Search"
-            className="rounded-full p-2.5 transition-colors hover:bg-slate-100 md:hidden"
-          >
-            <Search className="size-5" />
-          </button>
-          <button
+          <NavLink
+            to={"/favorites"}
             aria-label="Favorites"
             onClick={() => setIsFavorite(!isFavorite)}
             className="hidden rounded-full p-2.5 transition-colors hover:bg-slate-100 sm:block"
@@ -88,20 +91,23 @@ function Navbar() {
                 isFavorite ? "fill-red-500 text-red-500" : "text-slate-950"
               }`}
             />
-          </button>
+          </NavLink>
+
           <NavLink
-            to={"/login"}
-            aria-label="Account"
-            className="hidden rounded-full p-2.5 transition-colors hover:bg-slate-100 sm:block"
+            to={isLoggedIn ? "/profile" : "/login"}
+            aria-label={isLoggedIn ? "Profile" : "Login"}
+            className="rounded-full p-2.5 transition-colors hover:bg-slate-100"
           >
             <UserRound className="size-5" />
           </NavLink>
-          <button
+
+          <NavLink
+            to={"/cart"}
             aria-label="Shopping bag"
             className="rounded-full p-2.5 transition-colors hover:bg-slate-100"
           >
             <ShoppingBag className="size-5" />
-          </button>
+          </NavLink>
 
           <Sheet>
             <SheetTrigger
@@ -118,27 +124,41 @@ function Navbar() {
             </SheetTrigger>
 
             <SheetContent side="left">
-              <SheetHeader>
-                <SheetTitle>KINETIC</SheetTitle>
-              </SheetHeader>
+              <div className="flex flex-col justify-between h-full">
+                <div>
+                  <SheetHeader>
+                    <SheetTitle>KINETIC</SheetTitle>
+                  </SheetHeader>
 
-              <nav className="flex flex-col gap-4 p-4">
-                {navLinks.map((link) => (
-                  <NavLink
-                    key={link.href}
-                    to={link.href}
-                    className={({ isActive }) =>
-                      `text-sm font-medium transition-colors ${
-                        isActive
-                          ? "text-slate-950"
-                          : "text-slate-600 hover:text-slate-950"
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                ))}
-              </nav>
+                  <nav className="flex flex-col gap-4 p-4">
+                    {navLinks.map((link) => (
+                      <NavLink
+                        key={link.href}
+                        to={link.href}
+                        className={({ isActive }) =>
+                          `text-sm font-medium transition-colors ${
+                            isActive
+                              ? "text-slate-950"
+                              : "text-slate-600 hover:text-slate-950"
+                          }`
+                        }
+                      >
+                        {link.label}
+                      </NavLink>
+                    ))}
+                  </nav>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-fit border-red-600 bg-transparent text-red-500 hover:bg-red-300/30 m-4"
+                  onClick={() => {
+                    localStorage.removeItem("kinetic-session");
+                    navigate("/");
+                  }}
+                >
+                  Sign out
+                </Button>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

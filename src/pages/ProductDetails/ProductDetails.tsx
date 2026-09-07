@@ -6,7 +6,7 @@ import { getProductById, type Product } from "@/services/products";
 
 import { useFavorites } from "@/context/FavoritesContext";
 import AddtoHeart from "@/components/subComponents/AddtoHeart";
-import AddToBag from "@/components/subComponents/AddTobag";
+import AddToBag from "@/components/subComponents/AddToBag";
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("en-US", {

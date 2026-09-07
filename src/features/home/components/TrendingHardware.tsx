@@ -1,9 +1,11 @@
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 import { getElectronicProducts, type Product } from "@/services/products";
+
 import AddtoHeart from "@/components/subComponents/AddtoHeart";
-import AddToBag from "@/components/subComponents/AddTobag";
+import AddToBag from "@/components/subComponents/AddToBag";
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("en-US", {
@@ -14,6 +16,8 @@ const formatPrice = (price: number) =>
 
 const TrendingHardware = () => {
   const [products, setProducts] = useState<Product[]>([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
@@ -30,6 +34,10 @@ const TrendingHardware = () => {
       isMounted = false;
     };
   }, []);
+
+  const handleProductClick = (product: Product) => {
+    navigate(`/product/${product.id}`);
+  };
 
   return (
     <section className="bg-white px-5 py-14 sm:px-8 sm:py-16 lg:py-20">
@@ -63,7 +71,8 @@ const TrendingHardware = () => {
               return (
                 <article
                   key={item?.id ?? index}
-                  className="group rounded-lg border border-slate-200 bg-white p-2 shadow-sm transition-shadow hover:shadow-md sm:p-3"
+                  onClick={() => item && handleProductClick(item)}
+                  className="group cursor-pointer rounded-lg border border-slate-200 bg-white p-2 shadow-sm transition-shadow hover:shadow-md sm:p-3"
                 >
                   {/* Image */}
                   <div className="relative aspect-square overflow-hidden rounded-md bg-slate-100">

@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import type { Product } from "@/services/products";
 import { useCart } from "@/context/CartContext";
+import { useNavigate } from "react-router";
 
 interface AddToBagProps {
   product: Product;
@@ -13,8 +14,16 @@ const AddToBag = ({ product, variant = "card" }: AddToBagProps) => {
   const { addToCart, removeFromCart, isInCart } = useCart();
 
   const inCart = isInCart(product.id);
+  const navigate = useNavigate();
+
+  const session = localStorage.getItem("kinetic-session");
+  const isLoggedIn = Boolean(session);
 
   const handleClick = () => {
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
     if (inCart) {
       removeFromCart(product.id);
       toast.success("Product Removed successfully!", {

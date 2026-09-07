@@ -1,25 +1,39 @@
 import { useState, type FormEvent } from "react";
+
 import { NavLink, useNavigate } from "react-router";
+
 import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
+
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+
 import { Input } from "@/components/ui/input";
+
 import { toast } from "sonner";
+
 import { getStoredAccounts, type StoredAccount } from "../authStorage";
+
+import { Select } from "antd";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
   const navigate = useNavigate();
+
   const [error, setError] = useState("");
+  const [accountType, setAccountType] = useState<"User" | "Admin">("User");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     const formData = new FormData(event.currentTarget);
+
     const email = String(formData.get("email") ?? "")
       .trim()
       .toLowerCase();
+
     const password = String(formData.get("password") ?? "");
 
     const accounts: StoredAccount[] = getStoredAccounts();
@@ -35,7 +49,11 @@ export function LoginForm({
 
     localStorage.setItem(
       "kinetic-session",
-      JSON.stringify({ name: account.name, email: account.email }),
+      JSON.stringify({
+        name: account.name,
+        email: account.email,
+        type: accountType,
+      }),
     );
 
     toast.success("Signed in successfully!", {
@@ -59,15 +77,41 @@ export function LoginForm({
               KINETIC
             </span>
           </p>
+
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
             Sign in to KINETIC
           </h1>
+
           <p className="text-sm leading-6 text-slate-500">
             Enter your details to access your KINETIC account.
           </p>
         </div>
+
+        <Field>
+          <FieldLabel htmlFor="account-type">Type</FieldLabel>
+
+          <Select
+            id="account-type"
+            value={accountType}
+            onChange={(value) => setAccountType(value)}
+            placeholder="Select an option"
+            className="w-full"
+            options={[
+              {
+                value: "User",
+                label: "User",
+              },
+              {
+                value: "Admin",
+                label: "Admin",
+              },
+            ]}
+          />
+        </Field>
+
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
+
           <Input
             id="email"
             name="email"
@@ -77,10 +121,12 @@ export function LoginForm({
             required
           />
         </Field>
+
         <Field>
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
           </div>
+
           <Input
             id="password"
             name="password"
@@ -89,11 +135,13 @@ export function LoginForm({
             required
           />
         </Field>
+
         {error && (
           <p role="alert" className="text-sm text-red-600">
             {error}
           </p>
         )}
+
         <Field>
           <Button
             type="submit"
@@ -103,6 +151,7 @@ export function LoginForm({
             Sign in
           </Button>
         </Field>
+
         <p className="text-center text-sm text-slate-500">
           New to KINETIC?{" "}
           <NavLink

@@ -7,7 +7,7 @@ import { getElectronicProducts, type Product } from "@/services/products";
 import type { StoreFilters } from "./FilterSidebar";
 import type { SortOption } from "./UnderNav";
 
-import AddToBag from "@/components/subComponents/AddTobag";
+import AddToBag from "@/components/subComponents/AddToBag";
 import AddtoHeart from "@/components/subComponents/AddtoHeart";
 
 interface ProductsProps {

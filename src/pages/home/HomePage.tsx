@@ -8,19 +8,19 @@ import Newsletter from "@/features/home/components/Newsletter";
 import woodenSpeaker from "@/assets/images/woodenspeaker.webp";
 
 const Home = () => {
-  const { scrollYProgress } = useScroll();
+  // const { scrollYProgress } = useScroll();
 
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    mass: 0.2,
-  });
+  // const smoothProgress = useSpring(scrollYProgress, {
+  //   stiffness: 100,
+  //   damping: 30,
+  //   mass: 0.2,
+  // });
 
-  const progressHeight = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
+  // const progressHeight = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
 
   return (
     <main className="bg-white text-slate-950">
-      <div className="pointer-events-none fixed right-5 top-1/2 z-50 hidden -translate-y-1/2 md:block">
+      {/* <div className="pointer-events-none fixed right-5 top-1/2 z-50 hidden -translate-y-1/2 md:block">
         <div className="mb-4 flex items-center justify-end gap-3 text-[10px] font-medium tracking-widest text-white/60">
           <span className="text-black">01</span>
           <span className="h-px w-3 bg-black" />
@@ -42,7 +42,7 @@ const Home = () => {
             }}
           />
         </div>
-      </div>
+      </div> */}
 
       <section
         id="hero"
