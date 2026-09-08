@@ -44,6 +44,22 @@ function Navbar() {
   const session = localStorage.getItem("kinetic-session");
   const isLoggedIn = Boolean(session);
 
+  const handleUserClick = () => {
+    const raw = localStorage.getItem("kinetic-session");
+
+    if (!raw) {
+      navigate("/login");
+      return;
+    }
+    const session = JSON.parse(raw);
+
+    if (session.type === "Admin") {
+      navigate("/admin");
+    } else {
+      navigate("/profile");
+    }
+  };
+
   return (
     <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:h-18 sm:gap-5 sm:px-8">
@@ -93,13 +109,14 @@ function Navbar() {
             />
           </NavLink>
 
-          <NavLink
-            to={isLoggedIn ? "/profile" : "/login"}
+          <Button
+            size="icon"
+            onClick={handleUserClick}
             aria-label={isLoggedIn ? "Profile" : "Login"}
             className="rounded-full p-2.5 transition-colors hover:bg-slate-100"
           >
             <UserRound className="size-5" />
-          </NavLink>
+          </Button>
 
           <NavLink
             to={"/cart"}
@@ -151,10 +168,7 @@ function Navbar() {
                 <Button
                   variant="outline"
                   className="w-fit border-red-600 bg-transparent text-red-500 hover:bg-red-300/30 m-4"
-                  onClick={() => {
-                    localStorage.removeItem("kinetic-session");
-                    navigate("/");
-                  }}
+                  onClick={handleUserClick}
                 >
                   Sign out
                 </Button>

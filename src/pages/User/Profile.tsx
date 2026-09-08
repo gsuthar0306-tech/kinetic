@@ -14,6 +14,9 @@ import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
+import type { PopconfirmProps } from "antd";
+import { Popconfirm } from "antd";
+import { toast } from "sonner";
 
 type Session = { name: string; email: string; type: string };
 type OrderItem = {
@@ -73,6 +76,19 @@ export function Profile() {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const { cartItems } = useCart();
   const { favorites } = useFavorites();
+
+  const confirm: PopconfirmProps["onConfirm"] = () => {
+    localStorage.removeItem("kinetic-session");
+    toast.success("Signed successfully");
+    setTimeout(() => {
+      navigate("/login");
+    }, 1000);
+  };
+
+  const cancel: PopconfirmProps["onCancel"] = (e) => {
+    console.log(e);
+    toast.error("Click on No");
+  };
 
   useEffect(() => {
     const s = getSession();
@@ -152,16 +168,21 @@ export function Profile() {
                 </h1>
                 <p className="mt-2 text-sm text-slate-300">{session.email}</p>
               </div>
-              <Button
-                variant="outline"
-                className="w-fit border-slate-600 bg-transparent text-white hover:bg-white hover:text-slate-950"
-                onClick={() => {
-                  localStorage.removeItem("kinetic-session");
-                  navigate("/login");
-                }}
+              <Popconfirm
+                title="LOG OUT"
+                description="Are you sure want to log out?"
+                onConfirm={confirm}
+                onCancel={cancel}
+                okText="Yes"
+                cancelText="No"
               >
-                Sign out
-              </Button>
+                <Button
+                  variant="outline"
+                  className="w-fit border-slate-600 bg-transparent text-white hover:bg-white hover:text-slate-950"
+                >
+                  Sign out
+                </Button>
+              </Popconfirm>
             </div>
           </section>
 
@@ -361,16 +382,4 @@ export function Profile() {
       </main>
     );
   }
-  return (
-    <Button
-      variant="outline"
-      className="w-fit border-red-600 bg-transparent text-red-500 hover:bg-red-300/30 m-4"
-      onClick={() => {
-        localStorage.removeItem("kinetic-session");
-        navigate("/");
-      }}
-    >
-      Sign out
-    </Button>
-  );
 }

@@ -12,6 +12,9 @@ import {
   type StoredAccount,
 } from "../authStorage";
 
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+
 export function RegisterForm() {
   const navigate = useNavigate();
 
@@ -37,7 +40,7 @@ export function RegisterForm() {
         .required("Password is required.")
         .min(8, "Password must be at least 8 characters.")
         .matches(
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+          passwordRegex,
           "Password must contain uppercase, lowercase, number and special character.",
         ),
 
