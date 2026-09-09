@@ -21,7 +21,12 @@ const AddToBag = ({ product, variant = "card" }: AddToBagProps) => {
 
   const handleClick = () => {
     if (!isLoggedIn) {
-      navigate("/login");
+      toast.message("Please Log into KENITEC", {
+        description: `You will need to logIN to ADD A product to Your bag`,
+      });
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
       return;
     }
     if (inCart) {

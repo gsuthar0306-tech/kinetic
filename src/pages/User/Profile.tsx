@@ -161,7 +161,7 @@ export function Profile() {
                   <UserRound className="h-6 w-6" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-                  Your account
+                  Your account<span className="px-3">{session.type}</span>
                 </p>
                 <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
                   Welcome back, {session.name}

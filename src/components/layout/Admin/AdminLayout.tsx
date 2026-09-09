@@ -1,26 +1,47 @@
+import type { SideNavbarItem } from "@/components/layout/User/UserSidebar";
 import React from "react";
-import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
 import { Outlet } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { AdminNavbar } from "@/features/Admin/components/AdminNavbar";
+import {
+  ChartNoAxesCombined,
+  LayoutGrid,
+  Package,
+  Settings,
+  ShoppingBag,
+} from "lucide-react";
+
 const { Content, Footer, Sider } = Layout;
 
-const items = [
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  UserOutlined,
-].map((icon, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(icon),
-  label: `nav ${index + 1}`,
-}));
+const SideNavbarLinks: SideNavbarItem[] = [
+  {
+    label: "DashBoard",
+    href: "/admin",
+    icon: LayoutGrid,
+  },
+  {
+    label: "Orders",
+    href: "/admin/order",
+    icon: ShoppingBag,
+  },
+  {
+    label: "Inventory",
+    href: "/admin/inventory",
+    icon: Package,
+  },
+  {
+    label: "Analytics",
+    href: "/admin/analytics",
+    icon: ChartNoAxesCombined,
+  },
+  {
+    label: "Settings",
+    href: "/admin/setting",
+    icon: Settings,
+  },
+];
 
 const AdminLayout: React.FC = () => {
   const {
@@ -29,6 +50,13 @@ const AdminLayout: React.FC = () => {
 
   const currentYear = new Date().getFullYear();
   const navigate = useNavigate();
+
+  const menuItems = SideNavbarLinks.map((link) => ({
+    key: link.href,
+    label: link.label,
+    icon: React.createElement(link.icon as React.ComponentType),
+  }));
+
   return (
     <Layout className="h-[100vh]">
       <Sider
@@ -41,24 +69,28 @@ const AdminLayout: React.FC = () => {
           console.log(collapsed, type);
         }}
       >
-        <section className="flex flex-col justify-between h-full">
+        <section className="flex flex-col justify-between h-full bg-[#EFF4FF]">
           <div>
             <div className="flex h-16 items-center justify-center">
-              <span className="text-sm font-black tracking-[0.16em] text-white">
+              <span className="text-lg font-black tracking-[0.16em] ">
                 KINETIC
               </span>
             </div>{" "}
             <Menu
-              theme="dark"
+              className="!bg-[#EFF4FF] !border-0"
+              theme="light"
               mode="inline"
               defaultSelectedKeys={["4"]}
-              items={items}
+              items={menuItems}
+              onClick={({ key }) => {
+                navigate(key);
+              }}
             />
           </div>
-          <div>
+          <div className="text-center p-3">
             <Button
               variant="outline"
-              className="w-fit border-red-600 bg-transparent text-red-500 hover:bg-red-300/30 m-4"
+              className="w-full border-red-600 bg-transparent text-red-500 hover:text-white hover:font-bold hover:bg-red-500"
               onClick={() => {
                 localStorage.removeItem("kinetic-session");
                 navigate("/");

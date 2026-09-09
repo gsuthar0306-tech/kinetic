@@ -38,7 +38,6 @@ const navLinks: NavLinkItem[] = [
 ];
 
 function Navbar() {
-  const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
 
   const session = localStorage.getItem("kinetic-session");
@@ -97,18 +96,22 @@ function Navbar() {
         </label>
         <div className="flex items-center gap-1 text-slate-700">
           <NavLink
-            to={"/favorites"}
+            to="/favorites"
             aria-label="Favorites"
-            onClick={() => setIsFavorite(!isFavorite)}
-            className="hidden rounded-full p-2.5 transition-colors hover:bg-slate-100 sm:block"
+            className={({ isActive }) =>
+              `hidden rounded-full p-2.5 transition-colors hover:bg-slate-100 sm:block ${
+                isActive ? "text-red-500" : "text-slate-950"
+              }`
+            }
           >
-            <Heart
-              className={`size-5 transition-colors ${
-                isFavorite ? "fill-red-500 text-red-500" : "text-slate-950"
-              }`}
-            />
+            {({ isActive }) => (
+              <Heart
+                className={`size-5 transition-colors ${
+                  isActive ? "fill-red-500 text-red-500" : "text-slate-950"
+                }`}
+              />
+            )}
           </NavLink>
-
           <Button
             size="icon"
             onClick={handleUserClick}

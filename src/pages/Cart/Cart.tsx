@@ -21,9 +21,11 @@ const Cart = () => {
     return (
       <main className="min-h-[60vh] px-6 py-12">
         <div className="mx-auto max-w-5xl">
-          <h1 className="text-3xl font-semibold">Your Cart</h1>
+          <h1 className="text-3xl pb-7 font-semibold border-b border-slate-300">
+            Your Cart
+          </h1>
 
-          <div className="mt-12 flex min-h-[300px] flex-col items-center justify-center rounded-xl border">
+          <div className="bg-white mt-12 flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-slate-500">
             <h2 className="text-xl font-medium">Your cart is empty</h2>
 
             <p className="mt-2 text-sm text-gray-500">
@@ -38,14 +40,16 @@ const Cart = () => {
   return (
     <main className="min-h-[60vh] px-6 py-12">
       <div className="mx-auto max-w-6xl">
-        <h1 className="text-3xl font-semibold">Your Cart</h1>
+        <h1 className="text-3xl font-semibold pb-7 border-b border-slate-300">
+          Your Cart
+        </h1>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_350px]">
           <div className="space-y-4">
             {cartItems.map((item) => (
               <div
                 key={item.product.id}
-                className="flex gap-4 rounded-xl border border-slate-300 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="flex gap-4 bg-white rounded-xl border border-dashed border-slate-500 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 <img
                   src={item.product.thumbnail}
@@ -105,7 +109,7 @@ const Cart = () => {
             ))}
           </div>
 
-          <div className="h-fit rounded-xl border p-6">
+          <div className="h-fit rounded-xl border p-6 bg-white">
             <h2 className="text-xl font-semibold">Order Summary</h2>
 
             <div className="mt-6 space-y-4">

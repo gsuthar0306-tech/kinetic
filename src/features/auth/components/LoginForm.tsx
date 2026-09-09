@@ -1,19 +1,11 @@
 import { useState, type FormEvent } from "react";
-
 import { NavLink, useNavigate } from "react-router";
-
 import { cn } from "@/lib/utils";
-
 import { Button } from "@/components/ui/button";
-
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-
 import { Input } from "@/components/ui/input";
-
 import { toast } from "sonner";
-
 import { getStoredAccounts, type StoredAccount } from "../authStorage";
-
 import { Select } from "antd";
 
 export function LoginForm({
@@ -59,8 +51,13 @@ export function LoginForm({
     toast.success("Signed in successfully!", {
       description: `Welcome back, ${account.name}.`,
     });
+    const session = JSON.parse(localStorage.getItem("kinetic-session") ?? "{}");
 
-    navigate("/");
+    if (session.type === "Admin") {
+      navigate("/admin");
+    } else {
+      navigate("/profile");
+    }
   }
 
   return (
