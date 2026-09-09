@@ -69,7 +69,7 @@ const AdminLayout: React.FC = () => {
           console.log(collapsed, type);
         }}
       >
-        <section className="flex flex-col justify-between h-full bg-[#EFF4FF]">
+        <section className="flex flex-col justify-between h-full !bg-[#EFF4FF]">
           <div>
             <div className="flex h-16 items-center justify-center">
               <span className="text-lg font-black tracking-[0.16em] ">
